@@ -49,6 +49,12 @@ describe('GetQuarterlyProgressInteractor', () => {
     expect(r.forecast.tiers[0]!.requiredPerDay).toBeCloseTo(472 / 38)
   })
 
+  it('gives the target by the end of today per month and for the quarter', async () => {
+    const r = await run({}) // qui 05/11: 4 dos 21 dias úteis de novembro, contando hoje
+    expect(r.months.map((m) => m.targetByEndOfToday)).toEqual([176, expect.closeTo((152 * 4) / 21), 0])
+    expect(r.targetByEndOfToday).toBeCloseTo(176 + (152 * 4) / 21)
+  })
+
   it('tells each month\'s expected hours so far (100%): full goal if past, 0 if future', async () => {
     const r = await run({}) // qui 05/11: seg, ter, qua de novembro encerrados
     expect(r.months[0]!.expectedHours).toBe(176)

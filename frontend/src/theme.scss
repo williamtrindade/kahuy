@@ -186,6 +186,52 @@ aside.sidebar {
   }
 }
 
+// Marca de "onde deveria estar hoje": traço pontilhado com o rótulo em cima da barra
+.tier-bar.has-today {
+  padding-top: 1.15rem;
+
+  // as marcas de 100%/125% descem junto com a barra
+  .tier-marker {
+    top: calc(1.15rem - 4px);
+  }
+}
+
+.today-marker {
+  position: absolute;
+  top: calc(1.15rem - 5px);
+  height: calc(#{$progress-height} + 10px);
+  width: 2px;
+  background: repeating-linear-gradient(to bottom, $dark 0 3px, transparent 3px 5px);
+  transform: translateX(-1px);
+
+  > span {
+    position: absolute;
+    bottom: calc(100% + 1px);
+    width: max-content;
+    white-space: nowrap;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: $dark;
+  }
+
+  &.align-center > span {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  &.align-start > span {
+    left: -2px;
+  }
+
+  &.align-end > span {
+    right: -2px;
+  }
+
+  &.reached > span {
+    color: $primary;
+  }
+}
+
 .tier-bar.on-dark {
   .progress {
     background: rgba(#fff, 0.14);
@@ -402,5 +448,28 @@ $vacation: #2f6fdb;
 
   &.holiday {
     background: $danger;
+  }
+}
+
+// Selo de status com as cores do Notion, em versão suave (fundo claro, texto escuro)
+.status-badge {
+  font-weight: 600;
+
+  @each $name, $bg, $fg in (
+    default #ececec #4a4a4a,
+    gray #e6e6e6 #4a4a4a,
+    brown #efe4da #6b4a2f,
+    orange #fde4cf #9a4b11,
+    yellow #fbf0c4 #7a5d00,
+    green #d8f1e0 #146c34,
+    blue #dbe8fd #1e4fa3,
+    purple #ebe2f9 #5b3a9a,
+    pink #fbe0ec #9b2a62,
+    red #fbdede #a12a2a
+  ) {
+    &.notion-#{$name} {
+      background: $bg;
+      color: $fg;
+    }
   }
 }

@@ -11,6 +11,8 @@ export type GetMonthlyProgressResponseModel = {
   openHours: number
   forecastHours: number
   remainingWorkingDays: number
+  /** meta de 100% até o fim de hoje (conta hoje, se for dia útil): a marca "hoje" da barra */
+  targetByEndOfToday: number
   /** meta de um dia útil (HOURS_PER_DAY) */
   dailyGoalHours: number
   /** ritmo: entregue no mês antes de hoje ÷ dias úteis do mês já encerrados; null se nenhum encerrou */
@@ -42,9 +44,9 @@ export type GetMonthlyProgressResponseModel = {
   /**
    * Tasks do mês: abertas (só no mês corrente) e depois as concluídas no mês, da mais recente.
    * kind: 'test' se o tipo está em TEST_TYPES, senão 'development'. date: dia da conclusão (null se aberta).
-   * week: `start` da semana em weeks (abertas: semana corrente).
+   * week: `start` da semana em weeks (abertas: semana corrente). statusColor: cor do status no Notion (só exibição).
    */
-  tasks: { title: string; status: string; hours: number; url: string; done: boolean; kind: 'development' | 'test'; date: string | null; week: string }[]
+  tasks: { title: string; status: string; statusColor: string | null; hours: number; url: string; done: boolean; kind: 'development' | 'test'; date: string | null; week: string }[]
   /**
    * Semanas (domingo a sábado) que tocam o mês: start/end completos (card Semana) e
    * inMonthStart/inMonthEnd, o trecho dentro do mês (tasks do mês por semana).

@@ -2,7 +2,7 @@ import { Task } from '../../Entities/Task'
 import { NotionMappingError } from './NotionMappingError'
 import type { NotionFieldMap, NotionPage, NotionProperty } from './NotionTypes'
 
-type Named = { name?: string } | null | undefined
+type Named = { name?: string; color?: string } | null | undefined
 type DateValue = { start?: string | null; end?: string | null } | null | undefined
 
 /**
@@ -18,7 +18,8 @@ export class NotionTaskMapper {
   constructor(private readonly fields: NotionFieldMap) {}
 
   toEntity(page: NotionPage): Task {
-    const status = this.required(page, this.fields.status, ['select', 'status'])
+    const statusProp = this.required(page, this.fields.status, ['select', 'status'])
+    const status = (statusProp.select ?? statusProp.status) as Named
     const date = this.required(page, this.fields.date, ['date']).date as DateValue
     const type = page.properties[this.fields.type]
 
@@ -26,7 +27,8 @@ export class NotionTaskMapper {
       id: page.id,
       title: this.title(page),
       hours: this.hours(page),
-      status: ((status.select ?? status.status) as Named)?.name ?? '',
+      status: status?.name ?? '',
+      statusColor: status?.color ?? null,
       type: (type?.select as Named)?.name ?? null,
       startDate: parseNotionDate(date?.start),
       endDate: parseNotionDate(date?.end),

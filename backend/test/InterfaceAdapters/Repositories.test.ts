@@ -62,6 +62,16 @@ describe('NotionTaskMapper date-only and field types', () => {
     expect(mapper.toEntity(p).hours).toBe(2.5)
   })
 
+  it('keeps the status color from Notion (select or status), null when absent', () => {
+    const p = clone(byTitle('Pesos invertidos'))
+    p.properties.Status = { type: 'select', select: { name: 'Programando', color: 'orange' } }
+    expect(mapper.toEntity(p)).toMatchObject({ status: 'Programando', statusColor: 'orange' })
+    p.properties.Status = { type: 'status', status: { name: 'Aguardando', color: 'blue' } }
+    expect(mapper.toEntity(p)).toMatchObject({ status: 'Aguardando', statusColor: 'blue' })
+    p.properties.Status = { type: 'select', select: { name: 'X' } }
+    expect(mapper.toEntity(p).statusColor).toBeNull()
+  })
+
   it('rejects a mapped field of the wrong type naming the field and type (M3)', () => {
     const p = clone(byTitle('Pesos invertidos'))
     p.properties.Horas = { type: 'rich_text', rich_text: [] }

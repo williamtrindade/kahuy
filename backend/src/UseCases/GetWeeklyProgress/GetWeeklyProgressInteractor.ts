@@ -55,6 +55,7 @@ export class GetWeeklyProgressInteractor implements GetWeeklyProgressInputBounda
       previousWeek: week.previous().start,
       nextWeek: week.next().start,
       goalHours,
+      targetByEndOfToday: workdays.filter((d) => d <= today).length * hoursPerDay,
       workingDays: workdays.length,
       remainingWorkdays,
       doneHours,

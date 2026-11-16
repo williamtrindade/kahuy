@@ -79,6 +79,16 @@ describe('GetWeeklyProgressInteractor', () => {
     expect(w.delivered.tiers[0]!.expectedHours).toBe(16) // seg e ter encerrados
   })
 
+  it('gives the target by the end of today: from Monday morning it already counts the day', async () => {
+    expect((await run({})).targetByEndOfToday).toBe(32) // qui: seg a qui
+    expect((await run({}, { now: '2026-11-02T11:00:00Z' })).targetByEndOfToday).toBe(8) // seg de manhã
+    expect((await run({}, { now: '2026-11-01T15:00:00Z' })).targetByEndOfToday).toBe(0) // domingo
+    expect((await run({}, { now: '2026-11-07T15:00:00Z' })).targetByEndOfToday).toBe(40) // sábado
+    expect((await run({ week: '2026-10-28' })).targetByEndOfToday).toBe(40) // semana passada
+    expect((await run({ week: '2026-11-10' })).targetByEndOfToday).toBe(0) // semana futura
+    expect((await run({}, { holidays: { '2026-11-02': 'Finados' } })).targetByEndOfToday).toBe(24) // ter a qui
+  })
+
   it('on Saturday all five weekdays are expected', async () => {
     expect((await run({}, { now: '2026-11-07T15:00:00Z' })).delivered.tiers[0]!.expectedHours).toBe(40)
   })

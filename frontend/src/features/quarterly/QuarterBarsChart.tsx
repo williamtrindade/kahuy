@@ -9,7 +9,7 @@ type MetaGeometry = { x: number; baseline: number; pxPerHour: number }
 
 /**
  * Meta × entregue ou previsto por mês (segue o botão Entregue / Previsto). No trimestre corrente, uma
- * linha tracejada no mês atual marca o esperado até hoje (100%), atravessando as barras do mês.
+ * linha tracejada no mês atual marca a meta até o fim de hoje (100%), atravessando as barras do mês.
  */
 export function QuarterBarsChart({ months, view }: { months: QuarterlyProgressViewModel['months']; view: Scenario }) {
   const current = months.find((m) => m.isCurrent)
@@ -26,15 +26,15 @@ export function QuarterBarsChart({ months, view }: { months: QuarterlyProgressVi
   const expectedShape = (p: BarShapeProps) => {
     const m = p.payload as Month
     const g = meta.get(m.month)
-    if (!m.isCurrent || !g || m.expectedHours <= 0) return <Rectangle {...p} />
-    const y = g.baseline - m.expectedHours * g.pxPerHour
+    if (!m.isCurrent || !g || m.targetByEndOfToday <= 0) return <Rectangle {...p} />
+    const y = g.baseline - m.targetByEndOfToday * g.pxPerHour
     const x2 = (p.x ?? 0) + (p.width ?? 0) + 6
     return (
       <g>
         <Rectangle {...p} />
         <line x1={g.x - 6} x2={x2} y1={y} y2={y} stroke="#1b1b1b" strokeWidth={2} strokeDasharray="6 4" />
         <text x={x2} y={y - 6} textAnchor="end" fontSize={11} fontWeight={600} fill="#1b1b1b" paintOrder="stroke" stroke="#f7f7f7" strokeWidth={3}>
-          esperado hoje · {hours(m.expectedHours)}
+          hoje · {hours(m.targetByEndOfToday)}
         </text>
       </g>
     )
@@ -58,10 +58,10 @@ export function QuarterBarsChart({ months, view }: { months: QuarterlyProgressVi
           )}
         </BarChart>
       </ResponsiveContainer>
-      {current && current.expectedHours > 0 && (
+      {current && current.targetByEndOfToday > 0 && (
         <p className="small text-secondary text-center mb-0">
-          <span className="fw-semibold text-dark">– – –</span> esperado até hoje em {monthLabel(current.month).split(' ')[0]?.toLowerCase()}{' '}
-          (100%): {hours(current.expectedHours)}
+          <span className="fw-semibold text-dark">– – –</span> meta até o fim de hoje em {monthLabel(current.month).split(' ')[0]?.toLowerCase()}{' '}
+          (100%): {hours(current.targetByEndOfToday)}
         </p>
       )}
     </div>

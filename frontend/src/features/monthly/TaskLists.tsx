@@ -17,6 +17,8 @@ const SCOPES: { id: Scope; label: string }[] = [
   { id: 'week', label: 'Semana' },
 ]
 const shortDate = (iso: string) => `${iso.slice(8, 10)}/${iso.slice(5, 7)}`
+// Cores das opções de status do Notion; o selo usa a mesma cor que o status tem lá (desconhecida = cinza).
+const NOTION_COLORS = new Set(['default', 'gray', 'brown', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'red'])
 /** Trecho da semana dentro do mês: "08–14/11", ou "30/11" quando é um dia só. */
 const weekLabel = (w: Week) =>
   w.inMonthStart === w.inMonthEnd ? shortDate(w.inMonthStart) : `${w.inMonthStart.slice(8, 10)}–${shortDate(w.inMonthEnd)}`
@@ -167,11 +169,10 @@ function TaskTable({ title, tasks }: { title: string; tasks: Task[] }) {
                       </a>
                     </td>
                     <td className="text-nowrap">
-                      {t.done ? (
-                        <span className="badge text-bg-success">Concluída{t.date ? ` · ${shortDate(t.date)}` : ''}</span>
-                      ) : (
-                        <span className="badge text-bg-light border">{t.status}</span>
-                      )}
+                      <span className={`badge status-badge notion-${NOTION_COLORS.has(t.statusColor ?? '') ? t.statusColor : 'default'}`}>
+                        {t.status || 'sem status'}
+                        {t.done && t.date ? ` · ${shortDate(t.date)}` : ''}
+                      </span>
                     </td>
                     <td className="text-end text-nowrap">{hours(t.hours)}</td>
                   </tr>

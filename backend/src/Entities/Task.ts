@@ -7,6 +7,8 @@ export type TaskProps = {
   title: string
   hours: number
   status: string
+  /** cor da opção de status na fonte (ex.: "orange"), só para exibição; null se não houver */
+  statusColor?: string | null
   type: string | null
   startDate: Date | null
   endDate: Date | null
@@ -18,6 +20,7 @@ export class Task {
   readonly title: string
   readonly hours: number
   readonly status: string
+  readonly statusColor: string | null
   readonly type: string | null
   readonly startDate: Date | null
   readonly endDate: Date | null
@@ -31,6 +34,7 @@ export class Task {
     this.title = props.title
     this.hours = props.hours
     this.status = props.status
+    this.statusColor = props.statusColor ?? null
     this.type = props.type
     this.startDate = props.startDate
     this.endDate = props.endDate

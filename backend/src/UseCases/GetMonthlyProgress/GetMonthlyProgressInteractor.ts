@@ -68,6 +68,7 @@ export class GetMonthlyProgressInteractor implements GetMonthlyProgressInputBoun
       openHours,
       forecastHours: doneHours + openHours,
       remainingWorkingDays: remainingDays,
+      targetByEndOfToday: goal * elapsedWorkdayRatio(workMonth, today, true),
       dailyGoalHours: workMonth.hoursPerDay,
       pacePerWorkday: pace,
       projectedHours: pace === null ? null : Math.max(doneHours, doneBeforeToday + pace * remainingDays),
@@ -100,6 +101,7 @@ export class GetMonthlyProgressInteractor implements GetMonthlyProgressInputBoun
     const row = (t: Task, isDone: boolean) => ({
       title: t.title,
       status: t.status,
+      statusColor: t.statusColor,
       hours: t.hours,
       url: t.url,
       done: isDone,

@@ -85,7 +85,7 @@ export function WeekCard({ weeks, initialWeek, onError }: { weeks: MonthWeek[]; 
                     ? 'semana ainda não começou'
                     : 'só tasks concluídas'}
             </div>
-            <TierBar value={scenario.hours} tiers={scenario.tiers.map((t) => ({ percent: t.percent, hours: t.goalHours }))} />
+            <TierBar value={scenario.hours} tiers={scenario.tiers.map((t) => ({ percent: t.percent, hours: t.goalHours }))} expected={data.period === 'current' ? data.targetByEndOfToday : undefined} />
             <TierOutlookList tiers={scenario.tiers} remainingWorkdays={data.remainingWorkdays} closedLabel="semana encerrada" period={data.period} />
           </>
         )}

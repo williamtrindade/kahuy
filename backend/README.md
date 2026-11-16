@@ -33,7 +33,9 @@ Errors: 401 (no session or wrong password), 422 (invalid parameter), 429 (login 
 `Retry-After`), 502 (a mapped field doesn't exist, or Notion failed). A task with invalid data, such as
 negative hours, is not an error: it's left out of the totals and listed in `invalidTasks`.
 
-Response types live in `src/InterfaceAdapters/ViewModels/`; the front imports them directly.
+Response types live in `src/InterfaceAdapters/ViewModels/`; the front imports them directly. Month, week, and
+quarter include `targetByEndOfToday`: the 100% goal up to the end of today (today counts if it's a workday),
+used for the "today" mark on the progress bars.
 
 ## Where things live
 

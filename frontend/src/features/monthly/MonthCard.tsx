@@ -29,7 +29,7 @@ export function MonthCard({ data }: { data: MonthlyProgressViewModel }) {
                 ? `${data.doneTaskCount} tasks concluídas · média de ${hours(data.averageHoursPerTask)} por task`
                 : `${hours(data.doneHours)} entregues + ${hours(data.openHours)} em aberto`}
             </div>
-            <TierBar value={scenario.hours} tiers={scenario.tiers.map((t) => ({ percent: t.percent, hours: t.goalHours }))} />
+            <TierBar value={scenario.hours} tiers={scenario.tiers.map((t) => ({ percent: t.percent, hours: t.goalHours }))} expected={data.isCurrent ? data.targetByEndOfToday : undefined} />
             {data.isCurrent ? (
               <TierOutlookList tiers={scenario.tiers} remainingWorkdays={data.remainingWorkingDays} closedLabel="mês encerrado" />
             ) : (

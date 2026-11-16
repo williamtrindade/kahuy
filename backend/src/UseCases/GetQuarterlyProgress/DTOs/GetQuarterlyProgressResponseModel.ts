@@ -8,6 +8,8 @@ export type GetQuarterlyProgressResponseModel = {
   period: 'past' | 'current' | 'future'
   /** dias úteis de hoje (inclusive) até o fim do trimestre */
   remainingWorkingDays: number
+  /** meta de 100% até o fim de hoje (soma dos meses) */
+  targetByEndOfToday: number
   /** Dois cenários para o front alternar: delivered (só concluídas) e forecast (+ em aberto, só no corrente). */
   delivered: Scenario<TierOutlook>
   forecast: Scenario<TierOutlook>
@@ -16,6 +18,8 @@ export type GetQuarterlyProgressResponseModel = {
     goalHours: number
     /** esperado até hoje (100%): meta inteira se passado, 0 se futuro, proporcional aos dias úteis encerrados se corrente */
     expectedHours: number
+    /** meta de 100% até o fim de hoje (conta hoje, se for dia útil): a linha "hoje" do gráfico */
+    targetByEndOfToday: number
     doneHours: number
     forecastHours: number
     goalEstimated: boolean

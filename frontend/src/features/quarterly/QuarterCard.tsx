@@ -25,7 +25,7 @@ export function QuarterCard({ data, view, onView }: { data: QuarterlyProgressVie
             ? `${hours(data.doneHours)} entregues + ${hours(data.forecastHours - data.doneHours)} em aberto`
             : 'só tasks concluídas'}
         </div>
-        <TierBar value={scenario.hours} tiers={scenario.tiers.map((t) => ({ percent: t.percent, hours: t.goalHours }))} />
+        <TierBar value={scenario.hours} tiers={scenario.tiers.map((t) => ({ percent: t.percent, hours: t.goalHours }))} expected={current ? data.targetByEndOfToday : undefined} />
         {current ? (
           <TierOutlookList tiers={scenario.tiers} remainingWorkdays={data.remainingWorkingDays} closedLabel="trimestre encerrado" />
         ) : (

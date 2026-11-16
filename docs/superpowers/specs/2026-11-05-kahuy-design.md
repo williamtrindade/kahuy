@@ -316,7 +316,8 @@ frontend/src/
 - No final, **Tasks do mês** em duas listas: **Desenvolvimento** e **Testes** (`kind`: tipo em `TEST_TYPES` = teste,
   demais = desenvolvimento), com filtro único **Todas / Em aberto / Concluídas** (lembrado no navegador).
   Abertas (só no mês corrente) primeiro, depois as concluídas no mês, da mais recente; cada lista mostra
-  quantidade e total de horas do filtro; link para o Notion
+  quantidade e total de horas do filtro; link para o Notion. O status aparece com o nome e a **cor da opção no
+  Notion** (`statusColor`, versão suave da cor; desconhecida = cinza); nas concluídas, com a data ao lado
 - Período das tasks: **Mês | Semana** (lembrado). Em Semana, botões com as semanas do mês (domingo a
   sábado, no trecho dentro do mês: `weeks[].inMonthStart/inMonthEnd`) e as horas concluídas de cada uma; abre na semana atual (●)
   ou, em mês passado, na última com tasks. Cada task traz a sua semana (`week`); abertas ficam na semana atual
@@ -328,14 +329,20 @@ frontend/src/
   com 100%/125% e, por faixa, ritmo, faltam e h/dia nos dias úteis restantes do trimestre. O botão só
   aparece no trimestre corrente (nos outros não há tasks em aberto, então previsto = entregue)
 - Barras por mês: meta × entregue ou previsto (segue o botão). No trimestre corrente, linha tracejada no mês
-  atual com o **esperado até hoje** (100%, `months[].expectedHours`: meta × dias úteis encerrados ÷ dias
-  úteis do mês) e legenda com o valor
+  atual na **meta até o fim de hoje** (100%, `months[].targetByEndOfToday`: meta × dias úteis até hoje,
+  inclusive ÷ dias úteis do mês), igual à marca "hoje" das barras, e legenda com o valor
 
 **Navegação:** mês por botões: ano em ‹ 2026 › (só troca os meses mostrados, sem buscar) e os 12 meses
 à vista, com ● no mês atual; clicar num mês busca os dados. Enquanto carrega, os outros meses ficam
 desabilitados; uma busca em andamento é cancelada se o período mudar
 (AbortController), então nunca há respostas velhas nem requisições acumuladas. Trimestre: o mesmo seletor,
 com ‹ ano › e 1º–4º tri (● no atual). Componente único `YearPicker`. Logout.
+
+**Marca "hoje" nas barras:** nas barras de progresso da Semana, do Mês e do Trimestre, no período corrente, um
+traço pontilhado com o rótulo "hoje · Xh" marca a **meta de 100% até o fim de hoje** (`targetByEndOfToday`:
+conta o dia de hoje, se for dia útil; na segunda de manhã a semana já marca 8h). Difere do "no ritmo", que só
+conta os dias úteis já encerrados. Não aparece com 0h (ex.: domingo, início da semana) nem em períodos
+passados/futuros; o card Hoje não tem (a meta do dia é a própria marca de 100%).
 
 **Loading:** cada card que depende da API mostra o próprio estado de carregamento (conteúdo atenuado e
 bloqueado, spinner no centro do card). Primeira carga: os cards já aparecem no lugar, cada um com o seu

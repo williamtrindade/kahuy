@@ -66,12 +66,13 @@ export function remainingWorkingDays(wm: WorkMonth, today: string): number {
 }
 
 /** Fração dos dias úteis (seg–sex sem feriados) do mês já encerrados antes de hoje. */
-export function elapsedWorkdayRatio(wm: WorkMonth, today: string): number {
+/** Com `includeToday`, conta também o dia de hoje (meta até o fim de hoje); sem, só os encerrados ("no ritmo"). */
+export function elapsedWorkdayRatio(wm: WorkMonth, today: string, includeToday = false): number {
   const rel = relative(wm.month, today)
   if (rel < 0) return 1
   if (rel > 0) return 0
   if (wm.workdays.length === 0) return 0
-  return wm.workdays.filter((d) => d < today).length / wm.workdays.length
+  return wm.workdays.filter((d) => (includeToday ? d <= today : d < today)).length / wm.workdays.length
 }
 
 export function buildTiers(goal: number, expected100: number, done: number, tiers: readonly number[]): GoalTier[] {

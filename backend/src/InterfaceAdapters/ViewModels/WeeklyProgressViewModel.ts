@@ -11,6 +11,7 @@ export function toWeeklyProgressViewModel(r: R): WeeklyProgressViewModel {
   return {
     ...r,
     goalHours: round1(r.goalHours),
+    targetByEndOfToday: round1(r.targetByEndOfToday),
     doneHours: round1(r.doneHours),
     openHours: round1(r.openHours),
     forecastHours: round1(r.forecastHours),

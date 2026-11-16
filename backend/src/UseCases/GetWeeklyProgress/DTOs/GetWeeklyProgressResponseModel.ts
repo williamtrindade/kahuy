@@ -9,6 +9,8 @@ export type GetWeeklyProgressResponseModel = {
   previousWeek: string
   nextWeek: string
   goalHours: number
+  /** meta de 100% até o fim de hoje: dias úteis da semana até hoje (inclusive) × HOURS_PER_DAY */
+  targetByEndOfToday: number
   workingDays: number
   /** dias úteis de hoje (inclusive) até sábado */
   remainingWorkdays: number

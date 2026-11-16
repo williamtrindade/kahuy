@@ -41,6 +41,14 @@ describe('GetMonthlyProgressInteractor', () => {
     expect(r.delivered.tiers[0]!.requiredPerDay).toBeCloseTo(147 / 18)
   })
 
+  it('gives the target by the end of today (100%), counting today when it is a workday', async () => {
+    // qui 05/11: seg 02 a qui 05 = 4 dos 21 dias úteis calculados
+    expect((await run({})).targetByEndOfToday).toBeCloseTo((152 * 4) / 21)
+    expect((await run({}, { now: '2026-11-02T15:00:00Z' })).targetByEndOfToday).toBeCloseTo(152 / 21) // segunda: já 1 dia
+    expect((await run({ month: '2026-10' })).targetByEndOfToday).toBe(176) // passado: meta inteira
+    expect((await run({ month: '2026-12' })).targetByEndOfToday).toBe(0) // futuro
+  })
+
   it('projects the month by the pace of its closed workdays', async () => {
     const r = await run({}) // qui 05/11: seg 02, ter 03, qua 04 encerrados, com 5h; restam 18 dias úteis
     expect(r.dailyGoalHours).toBe(8)
@@ -127,10 +135,15 @@ describe('GetMonthlyProgressInteractor', () => {
   it('lists the month tasks split into development and test, open first', async () => {
     const r = await run({})
     expect(r.tasks).toEqual([
-      { title: 'D', status: 'Aguardando', hours: 6, url: expect.any(String), done: false, kind: 'development', date: null, week: '2026-11-01' },
-      { title: 'B', status: 'Concluido', hours: 2, url: expect.any(String), done: true, kind: 'development', date: '2026-11-04', week: '2026-11-01' },
-      { title: 'A [Guidolin]', status: 'Concluido', hours: 3, url: expect.any(String), done: true, kind: 'test', date: '2026-11-03', week: '2026-11-01' },
+      { title: 'D', status: 'Aguardando', hours: 6, url: expect.any(String), done: false, kind: 'development', date: null, week: '2026-11-01', statusColor: null },
+      { title: 'B', status: 'Concluido', hours: 2, url: expect.any(String), done: true, kind: 'development', date: '2026-11-04', week: '2026-11-01', statusColor: null },
+      { title: 'A [Guidolin]', status: 'Concluido', hours: 3, url: expect.any(String), done: true, kind: 'test', date: '2026-11-03', week: '2026-11-01', statusColor: null },
     ])
+  })
+
+  it('passes the Notion status color through to the task list', async () => {
+    const tasks = [makeTask({ title: 'P', status: 'Programando', statusColor: 'orange' })]
+    expect((await run({}, { tasks })).tasks).toEqual([expect.objectContaining({ status: 'Programando', statusColor: 'orange' })])
   })
 
   it('lists the weeks (Sunday to Saturday) of the month, with the part inside it', async () => {

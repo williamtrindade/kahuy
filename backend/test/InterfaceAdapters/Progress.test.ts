@@ -22,6 +22,7 @@ const monthly: GetMonthlyProgressResponseModel = {
   openHours: 14,
   forecastHours: 112,
   remainingWorkingDays: 12,
+  targetByEndOfToday: 104.4444,
   dailyGoalHours: 8,
   pacePerWorkday: 6.1666,
   projectedHours: 172.04,
@@ -46,7 +47,7 @@ const monthly: GetMonthlyProgressResponseModel = {
   },
   calendar: [{ date: '2026-11-03', kind: 'workday', name: null, doneHours: 2.25 }],
   dailyCumulative: [{ date: '2026-11-01', doneHours: 0, ideal: [{ percent: 100, hours: 7.2381 }, { percent: 125, hours: 9.0476 }] }],
-  tasks: [{ title: 'X', status: 'Concluido', hours: 2.25, url: 'u', done: true, kind: 'test', date: '2026-11-02', week: '2026-11-01' }],
+  tasks: [{ title: 'X', status: 'Concluido', hours: 2.25, url: 'u', done: true, kind: 'test', date: '2026-11-02', week: '2026-11-01', statusColor: 'green' }],
   weeks: [{ start: '2026-11-01', end: '2026-11-07', inMonthStart: '2026-11-01', inMonthEnd: '2026-11-07', isCurrent: true }],
   doneTaskCount: 3,
   averageHoursPerTask: 32.6666,
@@ -64,6 +65,7 @@ const quarterly: GetQuarterlyProgressResponseModel = {
   forecastHours: 136.25,
   period: 'current',
   remainingWorkingDays: 38,
+  targetByEndOfToday: 205.6666,
   delivered: {
     hours: 122.25,
     tiers: [{ percent: 100, goalHours: 488, expectedHours: 197.71, reached: false, onTrack: false, deltaHours: -75.46, remainingHours: 365.75, requiredPerDay: 9.6250 }],
@@ -72,7 +74,7 @@ const quarterly: GetQuarterlyProgressResponseModel = {
     hours: 136.25,
     tiers: [{ percent: 100, goalHours: 488, expectedHours: 197.71, reached: false, onTrack: false, deltaHours: -61.46, remainingHours: 351.75, requiredPerDay: 9.2565 }],
   },
-  months: [{ month: '2026-10', goalHours: 176, expectedHours: 176, doneHours: 88, forecastHours: 88, goalEstimated: false, isCurrent: false }],
+  months: [{ month: '2026-10', goalHours: 176, expectedHours: 176, targetByEndOfToday: 176, doneHours: 88, forecastHours: 88, goalEstimated: false, isCurrent: false }],
 }
 
 describe('view model helpers', () => {
@@ -92,7 +94,7 @@ describe('GetMonthlyProgressApiPresenter', () => {
     expect(vm.delivered.tiers[0]).toMatchObject({ expectedHours: 94.7, deltaHours: 3.3, onTrack: true, requiredPerDay: 4.4 })
     expect(vm.forecast).toMatchObject({ hours: 112, percent: 74 })
     expect(vm.averageHoursPerTask).toBe(32.7)
-    expect(vm).toMatchObject({ pacePerWorkday: 6.2, projectedHours: 172, projectedPercent: 113, dailyGoalHours: 8 })
+    expect(vm).toMatchObject({ pacePerWorkday: 6.2, projectedHours: 172, projectedPercent: 113, dailyGoalHours: 8, targetByEndOfToday: 104.4 })
     expect(vm.tasks[0]).toMatchObject({ hours: 2.3, kind: 'test', done: true })
     expect(vm.calendar[0]).toEqual({ date: '2026-11-03', kind: 'workday', name: null, doneHours: 2.3 })
     expect(vm.today!.delivered).toMatchObject({ hours: 6, percent: 75 })
@@ -112,6 +114,7 @@ const weekly: GetWeeklyProgressResponseModel = {
   previousWeek: '2026-10-25',
   nextWeek: '2026-11-08',
   goalHours: 40,
+  targetByEndOfToday: 32,
   workingDays: 5,
   remainingWorkdays: 2,
   doneHours: 13.25,
@@ -147,6 +150,7 @@ describe('GetQuarterlyProgressApiPresenter', () => {
     expect(vm.delivered).toMatchObject({ hours: 122.3, percent: 25 })
     expect(vm.forecast).toMatchObject({ hours: 136.3, percent: 28 })
     expect(vm.doneHours).toBe(122.3)
+    expect(vm.targetByEndOfToday).toBe(205.7)
     expect(vm.months[0]).toMatchObject({ donePercent: 50 })
     expect(vm.delivered.tiers[0]).toMatchObject({ deltaHours: -75.5, remainingHours: 365.8, requiredPerDay: 9.6 })
   })
