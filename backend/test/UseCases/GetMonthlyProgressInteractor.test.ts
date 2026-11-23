@@ -49,18 +49,27 @@ describe('GetMonthlyProgressInteractor', () => {
     expect((await run({ month: '2026-12' })).targetByEndOfToday).toBe(0) // futuro
   })
 
-  it('projects the month by the pace of its closed workdays', async () => {
-    const r = await run({}) // qui 05/11: seg 02, ter 03, qua 04 encerrados, com 5h; restam 18 dias úteis
+  it('projects the month by the pace of its workdays up to today, today included', async () => {
+    const r = await run({}) // qui 05/11: seg 02 a qui 05 = 4 dias úteis, com 5h; restam 17 depois de hoje
     expect(r.dailyGoalHours).toBe(8)
-    expect(r.pacePerWorkday).toBeCloseTo(5 / 3)
-    expect(r.projectedHours).toBeCloseTo(5 + (5 / 3) * 18)
+    expect(r.pacePerWorkday).toBeCloseTo(5 / 4)
+    expect(r.projectedHours).toBeCloseTo(5 + (5 / 4) * 17)
     const past = await run({ month: '2026-10' }) // outubro inteiro encerrado: 5h em 22 dias úteis
     expect(past.pacePerWorkday).toBeCloseTo(5 / 22)
     expect(past.projectedHours).toBe(5)
     const future = await run({ month: '2026-12' })
     expect([future.pacePerWorkday, future.projectedHours]).toEqual([null, null])
-    const firstDay = await run({}, { now: '2026-11-02T15:00:00Z' }) // segunda 02: nada encerrado no mês
-    expect(firstDay.pacePerWorkday).toBeNull()
+    const beforeFirstWorkday = await run({}, { now: '2026-11-01T15:00:00Z' }) // domingo 01: nenhum dia útil ainda
+    expect(beforeFirstWorkday.pacePerWorkday).toBeNull()
+  })
+
+  it('counts the hours delivered today in the pace, the projection and the expected hours', async () => {
+    const tasks = [...novemberTasks(), makeTask({ title: 'hoje', hours: 3, endDate: new Date('2026-11-05T13:00:00Z') })]
+    const r = await run({}, { tasks })
+    expect(r.pacePerWorkday).toBeCloseTo(8 / 4)
+    expect(r.projectedHours).toBeCloseTo(8 + 2 * 17)
+    expect(r.delivered.tiers[0]!.expectedHours).toBeCloseTo(r.targetByEndOfToday)
+    expect(r.delivered.tiers[0]!.deltaHours).toBeCloseTo(8 - (152 * 4) / 21)
   })
 
   it('splits the month into delivered and forecast scenarios', async () => {
@@ -68,7 +77,7 @@ describe('GetMonthlyProgressInteractor', () => {
     expect(r.forecast.hours).toBe(11)
     expect(r.forecast.tiers[0]).toMatchObject({ percent: 100, goalHours: 152, remainingHours: 141 })
     expect(r.forecast.tiers[0]!.requiredPerDay).toBeCloseTo(141 / 18)
-    expect(r.forecast.tiers[0]!.deltaHours).toBeCloseTo(11 - (152 * 3) / 21)
+    expect(r.forecast.tiers[0]!.deltaHours).toBeCloseTo(11 - (152 * 4) / 21)
     expect(r.forecast.tiers[1]).toMatchObject({ percent: 125, goalHours: 190, remainingHours: 179 })
     const past = await run({ month: '2026-10' })
     expect(past.forecast).toEqual(past.delivered) // sem abertas fora do mês corrente
@@ -165,8 +174,8 @@ describe('GetMonthlyProgressInteractor', () => {
   it('reports month tiers and whether it is on track', async () => {
     const r = await run({})
     expect(r.delivered.tiers[0]).toMatchObject({ percent: 100, goalHours: 152, reached: false, onTrack: false })
-    expect(r.delivered.tiers[0]!.expectedHours).toBeCloseTo((152 * 3) / 21)
-    expect(r.delivered.tiers[0]!.deltaHours).toBeCloseTo(5 - (152 * 3) / 21)
+    expect(r.delivered.tiers[0]!.expectedHours).toBeCloseTo((152 * 4) / 21) // seg 02 a qui 05, hoje incluso
+    expect(r.delivered.tiers[0]!.deltaHours).toBeCloseTo(5 - (152 * 4) / 21)
     expect(r.delivered.tiers[1]).toMatchObject({ percent: 125, goalHours: 190 })
     expect((await run({ month: '2026-10' })).delivered.tiers[0]!.expectedHours).toBe(176)
   })
@@ -228,7 +237,7 @@ describe('GetMonthlyProgressInteractor', () => {
       expect(r.goalHours).toBe(152)
       expect(r.goalEstimated).toBe(false)
       expect(r.remainingWorkingDays).toBe(17) // 05..30 seg–sex = 18, menos 20/11
-      expect(r.delivered.tiers[0]!.expectedHours).toBeCloseTo((152 * 2) / 19) // só 03 e 04 encerrados
+      expect(r.delivered.tiers[0]!.expectedHours).toBeCloseTo((152 * 3) / 19) // 03, 04 e hoje (05)
       expect(r.dailyCumulative.find((p) => p.date === '2026-11-02')!.ideal.map((i) => i.hours)).toEqual([0, 0])
     })
 

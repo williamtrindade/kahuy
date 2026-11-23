@@ -36,9 +36,9 @@ describe('GetWeeklyProgressInteractor', () => {
       workingDays: 5,
       doneHours: 5,
     })
-    // esperado: seg, ter, qua já encerrados = 3 × 8h
-    expect(w.delivered.tiers[0]).toMatchObject({ percent: 100, goalHours: 40, expectedHours: 24, onTrack: false, deltaHours: -19 })
-    expect(w.delivered.tiers[1]).toMatchObject({ percent: 125, goalHours: 50, expectedHours: 30 })
+    // esperado: seg a qui, hoje incluso = 4 × 8h
+    expect(w.delivered.tiers[0]).toMatchObject({ percent: 100, goalHours: 40, expectedHours: 32, onTrack: false, deltaHours: -27 })
+    expect(w.delivered.tiers[1]).toMatchObject({ percent: 125, goalHours: 50, expectedHours: 40 })
   })
 
   it('has delivered and forecast scenarios with what is missing per tier', async () => {
@@ -47,7 +47,7 @@ describe('GetWeeklyProgressInteractor', () => {
     expect(w.delivered.tiers[0]).toMatchObject({ remainingHours: 35, requiredPerDay: 17.5 })
     expect(w.delivered.tiers[1]).toMatchObject({ remainingHours: 45, requiredPerDay: 22.5 })
     expect(w.forecast.hours).toBe(11)
-    expect(w.forecast.tiers[0]).toMatchObject({ remainingHours: 29, requiredPerDay: 14.5, expectedHours: 24, onTrack: false })
+    expect(w.forecast.tiers[0]).toMatchObject({ remainingHours: 29, requiredPerDay: 14.5, expectedHours: 32, onTrack: false })
   })
 
   it('shows any week chosen by a date in it: a past week is closed', async () => {
@@ -76,7 +76,7 @@ describe('GetWeeklyProgressInteractor', () => {
     ]
     const w = await run({}, { tasks, now: '2026-12-02T15:00:00Z' }) // quarta
     expect(w).toMatchObject({ start: '2026-11-29', end: '2026-12-05', doneHours: 6 })
-    expect(w.delivered.tiers[0]!.expectedHours).toBe(16) // seg e ter encerrados
+    expect(w.delivered.tiers[0]!.expectedHours).toBe(24) // seg, ter e hoje (qua)
   })
 
   it('gives the target by the end of today: from Monday morning it already counts the day', async () => {
@@ -87,6 +87,13 @@ describe('GetWeeklyProgressInteractor', () => {
     expect((await run({ week: '2026-10-28' })).targetByEndOfToday).toBe(40) // semana passada
     expect((await run({ week: '2026-11-10' })).targetByEndOfToday).toBe(0) // semana futura
     expect((await run({}, { holidays: { '2026-11-02': 'Finados' } })).targetByEndOfToday).toBe(24) // ter a qui
+  })
+
+  it('counts today in the expected hours: on Monday morning it already expects 8h', async () => {
+    const tasks = [makeTask({ title: 'hoje', hours: 3, endDate: new Date('2026-11-02T13:00:00Z') })]
+    const w = await run({}, { tasks, now: '2026-11-02T14:00:00Z' })
+    expect(w.delivered.tiers[0]).toMatchObject({ expectedHours: 8, onTrack: false, deltaHours: -5 })
+    expect(w.delivered.tiers[0]!.expectedHours).toBe(w.targetByEndOfToday)
   })
 
   it('on Saturday all five weekdays are expected', async () => {
@@ -103,8 +110,8 @@ describe('GetWeeklyProgressInteractor', () => {
   it('discounts holidays from the goal and the expected hours', async () => {
     const w = await run({}, { holidays: { '2026-11-02': 'Finados' } })
     expect(w).toMatchObject({ goalHours: 32, workingDays: 4 })
-    expect(w.delivered.tiers[0]).toMatchObject({ goalHours: 32, expectedHours: 16 })
-    expect(w.delivered.tiers[1]).toMatchObject({ goalHours: 40, expectedHours: 20 })
+    expect(w.delivered.tiers[0]).toMatchObject({ goalHours: 32, expectedHours: 24 }) // ter a qui
+    expect(w.delivered.tiers[1]).toMatchObject({ goalHours: 40, expectedHours: 30 })
   })
 
   it('rejects an invalid week', async () => {

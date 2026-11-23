@@ -4,7 +4,7 @@ import type { TierOutlookViewModel } from '../api/types'
 import { hours } from '../format'
 
 type Props = {
-  /** média por dia útil já encerrado; null se nenhum encerrou */
+  /** média por dia útil até hoje (inclusive); null se ainda não houve dia útil */
   pace: number | null
   dailyGoalHours: number
   /** projeção de fechamento; null sem ritmo */
@@ -30,7 +30,7 @@ export function PacePanel({ pace, dailyGoalHours, projectedHours, projectedPerce
       </div>
       {pace === null ? (
         <p className="mb-0 text-white-50">
-          {period === 'future' ? 'O mês ainda não começou.' : 'Aparece depois do primeiro dia útil encerrado.'}
+          {period === 'future' ? 'O mês ainda não começou.' : 'Aparece a partir do primeiro dia útil do mês.'}
         </p>
       ) : (
         <>

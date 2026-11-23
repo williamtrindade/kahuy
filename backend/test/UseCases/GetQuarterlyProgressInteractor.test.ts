@@ -35,7 +35,7 @@ describe('GetQuarterlyProgressInteractor', () => {
 
   it('reports quarter tiers with the expected hours so far', async () => {
     const r = await run({})
-    expect(r.delivered.tiers[0]!.expectedHours).toBeCloseTo(176 + (152 * 3) / 21)
+    expect(r.delivered.tiers[0]!.expectedHours).toBeCloseTo(176 + (152 * 4) / 21)
     expect(r.delivered.tiers[1]!.goalHours).toBe(610)
   })
 
@@ -56,9 +56,9 @@ describe('GetQuarterlyProgressInteractor', () => {
   })
 
   it('tells each month\'s expected hours so far (100%): full goal if past, 0 if future', async () => {
-    const r = await run({}) // qui 05/11: seg, ter, qua de novembro encerrados
+    const r = await run({}) // qui 05/11: seg a qui de novembro, hoje incluso
     expect(r.months[0]!.expectedHours).toBe(176)
-    expect(r.months[1]!.expectedHours).toBeCloseTo((152 * 3) / 21)
+    expect(r.months[1]!.expectedHours).toBeCloseTo((152 * 4) / 21)
     expect(r.months[2]!.expectedHours).toBe(0)
   })
 

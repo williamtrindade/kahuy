@@ -40,7 +40,7 @@ export class GetQuarterlyProgressInteractor implements GetQuarterlyProgressInput
         month: month.toString(),
         goalHours,
         expectedHours,
-        targetByEndOfToday: goalHours * elapsedWorkdayRatio(workMonth, today, true),
+        targetByEndOfToday: expectedHours,
         doneHours,
         forecastHours: doneHours + (isCurrent ? openHours : 0),
         goalEstimated: workMonth.estimated,

@@ -52,16 +52,16 @@ atualizando via `git pull`. Possível ferramenta interna no futuro.
 | Cenários (hoje, semana, mês, trimestre) | **Entregue** = só concluídas; **Previsto** = concluídas + abertas (as abertas contam no período corrente: hoje, semana e mês). A API devolve os dois (`delivered`/`forecast`); o front alterna por card (botão, escolha lembrada no navegador). Fora do mês corrente, previsto = entregue. |
 | Meta do dia | `HOURS_PER_DAY` em dia útil (seg–sex); 0 no fim de semana (`isWorkingDay: false`). |
 | Dia útil | Seg–sex que não é feriado nacional (`holidays.json`, no build) nem folga pessoal (`HOLIDAYS`). Regra única em `WorkCalendarRepositoryInterface.isWorkday`; `dayOff(date)` diz se a folga é `holiday` (nacional) ou `vacation` (pessoal, que vence na data repetida); `WorkMonth.workdays` guarda as datas úteis do mês. |
-| Semana | Domingo a sábado (Entity `Week`), qualquer semana (`GET /api/progress/weekly?week=AAAA-MM-DD`, padrão: corrente). Abertas só na semana corrente. Semana passada: esperado = meta, restam 0 dias; futura: esperado 0. Realizado = concluídas com data final na semana. Meta = dias úteis da semana × `HOURS_PER_DAY` (40h sem feriado). Esperado = dias úteis encerrados antes de hoje × `HOURS_PER_DAY`. |
+| Semana | Domingo a sábado (Entity `Week`), qualquer semana (`GET /api/progress/weekly?week=AAAA-MM-DD`, padrão: corrente). Abertas só na semana corrente. Semana passada: esperado = meta, restam 0 dias; futura: esperado 0. Realizado = concluídas com data final na semana. Meta = dias úteis da semana × `HOURS_PER_DAY` (40h sem feriado). Esperado = dias úteis até hoje (inclusive) × `HOURS_PER_DAY`: na segunda de manhã já espera 8h. |
 | Faixas de meta | `GOAL_TIERS` (padrão `100,125`) valem para dia, mês e trimestre: horas da faixa = meta × faixa / 100 (dia 8h/10h; mês de 19 dias 152h/190h). |
-| Esperado até agora (mês) | `meta da faixa × (seg–sex do mês anteriores a hoje / seg–sex do mês)`. Mês passado = meta inteira; mês futuro = 0. Hoje não entra (tem card próprio). |
+| Esperado até agora (mês) | `meta da faixa × (dias úteis do mês até hoje, inclusive / dias úteis do mês)`. Mês passado = meta inteira; mês futuro = 0. Hoje entra desde o início do dia, para o progresso evoluir ao longo dele; é o mesmo valor da marca "hoje" (`targetByEndOfToday`). |
 | No ritmo | `realizado ≥ esperado até agora` da faixa; diferença = `realizado − esperado`. |
 | Esperado até agora (trimestre) | Soma do esperado de cada mês do trimestre. |
 | Ritmo necessário | `max(0, meta − realizado) / diasÚteisRestantes` (0 se não restam dias). |
 | Linhas ideais (gráfico) | Uma por faixa de `GOAL_TIERS` (100% = meta, 125% = supermeta). Para cada dia do mês: `meta da faixa × (dias úteis até o dia / dias úteis do mês)`. |
 | Nome entre colchetes | Texto do último `[...]` no título. Em tasks de teste (`TEST_TYPES`, padrão `TESTE`) é o **dev** que fez o que foi testado → "Horas de teste por dev"; nas demais é o **solicitante** → "Horas por solicitante". Cada card some se vazio. |
 | Faixas por cenário | Semana e mês: no ritmo/atrás, faltam (≥ 0) e ritmo necessário = faltam ÷ dias úteis restantes (hoje incluso). Dia: atingida e faltam (0 em dia não útil). |
-| Mês: ritmo e projeção | Ritmo = entregue no mês antes de hoje ÷ dias úteis do mês já encerrados; projeção = entregue antes de hoje + ritmo × dias úteis restantes (mínimo = entregue). `null` se nenhum dia útil encerrou (mês futuro ou 1º dia útil). Mês passado: média do mês inteiro e projeção = realizado. |
+| Mês: ritmo e projeção | Ritmo = entregue no mês (hoje incluso) ÷ dias úteis do mês até hoje (inclusive); projeção = entregue + ritmo × dias úteis restantes depois de hoje. `null` se ainda não houve dia útil no mês (mês futuro ou antes do 1º dia útil). Mês passado: média do mês inteiro e projeção = realizado. |
 | Fuso horário | Limites de dia/mês calculados no fuso `TIMEZONE` (padrão `America/Sao_Paulo`); o Notion devolve UTC. Datas só com dia (`2026-11-01`, sem hora) são tratadas como esse dia local. |
 | Tipos de campo | Horas: `number` ou fórmula numérica. Status: `select` ou `status`. Data: `date`. Título: `title`. Tipo diferente → 502 citando o campo e o tipo. |
 
@@ -340,8 +340,7 @@ com ‹ ano › e 1º–4º tri (● no atual). Componente único `YearPicker`. 
 
 **Marca "hoje" nas barras:** nas barras de progresso da Semana, do Mês e do Trimestre, no período corrente, um
 traço pontilhado com o rótulo "hoje · Xh" marca a **meta de 100% até o fim de hoje** (`targetByEndOfToday`:
-conta o dia de hoje, se for dia útil; na segunda de manhã a semana já marca 8h). Difere do "no ritmo", que só
-conta os dias úteis já encerrados. Não aparece com 0h (ex.: domingo, início da semana) nem em períodos
+conta o dia de hoje, se for dia útil; na segunda de manhã a semana já marca 8h). É o mesmo esperado do "no ritmo/atrás". Não aparece com 0h (ex.: domingo, início da semana) nem em períodos
 passados/futuros; o card Hoje não tem (a meta do dia é a própria marca de 100%).
 
 **Loading:** cada card que depende da API mostra o próprio estado de carregamento (conteúdo atenuado e

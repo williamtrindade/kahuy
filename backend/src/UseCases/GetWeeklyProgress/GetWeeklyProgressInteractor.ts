@@ -39,10 +39,10 @@ export class GetWeeklyProgressInteractor implements GetWeeklyProgressInputBounda
 
     const hoursPerDay = this.calendar.workMonth(YearMonth.parse(week.start.slice(0, 7))).hoursPerDay
     const workdays = dates.filter((d) => this.calendar.isWorkday(d))
-    const closed = workdays.filter((d) => d < today).length
-    const remainingWorkdays = workdays.length - closed
+    // Esperado conta o dia de hoje (meta até o fim de hoje); restam os dias úteis de hoje em diante.
+    const remainingWorkdays = workdays.filter((d) => d >= today).length
     const goalHours = workdays.length * hoursPerDay
-    const expected = closed * hoursPerDay
+    const expected = workdays.filter((d) => d <= today).length * hoursPerDay
     const scenario = (hours: number) => ({
       hours,
       tiers: buildOutlook(goalHours, expected, hours, this.settings.goalTiers, remainingWorkdays),
@@ -55,7 +55,7 @@ export class GetWeeklyProgressInteractor implements GetWeeklyProgressInputBounda
       previousWeek: week.previous().start,
       nextWeek: week.next().start,
       goalHours,
-      targetByEndOfToday: workdays.filter((d) => d <= today).length * hoursPerDay,
+      targetByEndOfToday: expected,
       workingDays: workdays.length,
       remainingWorkdays,
       doneHours,
