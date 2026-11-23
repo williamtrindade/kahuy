@@ -9,6 +9,7 @@ import { CumulativeChart } from './CumulativeChart'
 import { MonthCalendar } from './MonthCalendar'
 import { MonthCard } from './MonthCard'
 import { TaskLists } from './TaskLists'
+import { TasksPerDayCard } from './TasksPerDayCard'
 import { TodayCard } from './TodayCard'
 import { WeekCard } from './WeekCard'
 
@@ -106,6 +107,9 @@ export function MonthlyPage({ onError }: { onError: (e: unknown) => void }) {
         </div>
 
         <div className="row g-3">
+          <div className="col-lg-3">
+            <TasksPerDayCard data={data} />
+          </div>
           {breakdowns.map((b) => (
             <div key={b.title} className="col-lg">
               <BreakdownCard title={b.title} rows={b.rows} />

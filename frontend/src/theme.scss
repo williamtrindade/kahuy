@@ -456,16 +456,16 @@ $vacation: #2f6fdb;
   font-weight: 600;
 
   @each $name, $bg, $fg in (
-    default #ececec #4a4a4a,
-    gray #e6e6e6 #4a4a4a,
-    brown #efe4da #6b4a2f,
-    orange #fde4cf #9a4b11,
-    yellow #fbf0c4 #7a5d00,
-    green #d8f1e0 #146c34,
-    blue #dbe8fd #1e4fa3,
-    purple #ebe2f9 #5b3a9a,
-    pink #fbe0ec #9b2a62,
-    red #fbdede #a12a2a
+    "default" #ececec #4a4a4a,
+    "gray" #e6e6e6 #4a4a4a,
+    "brown" #efe4da #6b4a2f,
+    "orange" #fde4cf #9a4b11,
+    "yellow" #fbf0c4 #7a5d00,
+    "green" #d8f1e0 #146c34,
+    "blue" #dbe8fd #1e4fa3,
+    "purple" #ebe2f9 #5b3a9a,
+    "pink" #fbe0ec #9b2a62,
+    "red" #fbdede #a12a2a
   ) {
     &.notion-#{$name} {
       background: $bg;

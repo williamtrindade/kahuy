@@ -62,6 +62,7 @@ atualizando via `git pull`. Possível ferramenta interna no futuro.
 | Nome entre colchetes | Texto do último `[...]` no título. Em tasks de teste (`TEST_TYPES`, padrão `TESTE`) é o **dev** que fez o que foi testado → "Horas de teste por dev"; nas demais é o **solicitante** → "Horas por solicitante". Cada card some se vazio. |
 | Faixas por cenário | Semana e mês: no ritmo/atrás, faltam (≥ 0) e ritmo necessário = faltam ÷ dias úteis restantes (hoje incluso). Dia: atingida e faltam (0 em dia não útil). |
 | Mês: ritmo e projeção | Ritmo = entregue no mês (hoje incluso) ÷ dias úteis do mês até hoje (inclusive); projeção = entregue + ritmo × dias úteis restantes depois de hoje. `null` se ainda não houve dia útil no mês (mês futuro ou antes do 1º dia útil). Mês passado: média do mês inteiro e projeção = realizado. |
+| Mês: tasks por dia | Tasks concluídas no mês ÷ dias úteis do mês até hoje (inclusive), o mesmo divisor do ritmo (`elapsedWorkingDays`). `null` se ainda não houve dia útil no mês; mês passado: mês inteiro. |
 | Fuso horário | Limites de dia/mês calculados no fuso `TIMEZONE` (padrão `America/Sao_Paulo`); o Notion devolve UTC. Datas só com dia (`2026-11-01`, sem hora) são tratadas como esse dia local. |
 | Tipos de campo | Horas: `number` ou fórmula numérica. Status: `select` ou `status`. Data: `date`. Título: `title`. Tipo diferente → 502 citando o campo e o tipo. |
 
@@ -211,7 +212,7 @@ demais → 500. Controllers não têm `try/catch`.
 `workingDays`, `doneHours`, `openHours`, `forecastHours`, `remainingHours`
 (meta − realizado, mín. 0), `remainingWorkingDays`, `requiredPacePerDay`,
 `dailyCumulative[] { date, doneHours, idealHours }`, `openTasks[] { title, status,
-hours, url }`, `doneTaskCount`, `averageHoursPerTask`, `hoursByType[] { type, hours }`,
+hours, url }`, `doneTaskCount`, `averageHoursPerTask`, `elapsedWorkingDays`, `tasksPerWorkday`, `hoursByType[] { type, hours }`,
 `hoursByDeveloper[] { developer, hours }`, `hoursByRequester[] { requester, hours }`, `undatedTasks[] { title, url }`,
 `week` (`null` fora do mês corrente) `{ start, end, goalHours, doneHours, openHours, forecastHours, remainingWorkdays, pacePerWorkday, projectedHours, delivered{hours,tiers[]}, forecast{hours,tiers[]}, days[] }` (tiers com `remainingHours`, `requiredPerDay`),
 `today` (`null` fora do mês corrente) `{ date, isWorkingDay, doneHours, goalHours,
@@ -321,7 +322,8 @@ frontend/src/
 - Período das tasks: **Mês | Semana** (lembrado). Em Semana, botões com as semanas do mês (domingo a
   sábado, no trecho dentro do mês: `weeks[].inMonthStart/inMonthEnd`) e as horas concluídas de cada uma; abre na semana atual (●)
   ou, em mês passado, na última com tasks. Cada task traz a sua semana (`week`); abertas ficam na semana atual
-- Apoio: horas por tipo, de teste por dev e por solicitante; nº de tasks concluídas e média h/task (no card do mês)
+- Apoio: card "Tasks por dia" (média de tasks concluídas por dia útil, com "N tasks em D dias úteis"), na linha dos
+  cards de horas por tipo, de teste por dev e por solicitante; nº de tasks concluídas e média h/task (no card do mês)
 - Aviso quando a meta é estimada (ano sem feriados cadastrados), há tasks sem data ou tasks inválidas
 
 **Tela do trimestre**

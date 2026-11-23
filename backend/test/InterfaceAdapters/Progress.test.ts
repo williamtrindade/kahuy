@@ -25,6 +25,8 @@ const monthly: GetMonthlyProgressResponseModel = {
   targetByEndOfToday: 104.4444,
   dailyGoalHours: 8,
   pacePerWorkday: 6.1666,
+  elapsedWorkingDays: 7,
+  tasksPerWorkday: 0.4285,
   projectedHours: 172.04,
   delivered: {
     hours: 98,
@@ -94,6 +96,7 @@ describe('GetMonthlyProgressApiPresenter', () => {
     expect(vm.delivered.tiers[0]).toMatchObject({ expectedHours: 94.7, deltaHours: 3.3, onTrack: true, requiredPerDay: 4.4 })
     expect(vm.forecast).toMatchObject({ hours: 112, percent: 74 })
     expect(vm.averageHoursPerTask).toBe(32.7)
+    expect(vm).toMatchObject({ elapsedWorkingDays: 7, tasksPerWorkday: 0.4 })
     expect(vm).toMatchObject({ pacePerWorkday: 6.2, projectedHours: 172, projectedPercent: 113, dailyGoalHours: 8, targetByEndOfToday: 104.4 })
     expect(vm.tasks[0]).toMatchObject({ hours: 2.3, kind: 'test', done: true })
     expect(vm.calendar[0]).toEqual({ date: '2026-11-03', kind: 'workday', name: null, doneHours: 2.3 })

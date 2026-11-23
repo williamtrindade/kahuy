@@ -3,8 +3,12 @@ const MONTHS = [
   'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro',
 ]
 
+export function decimal(n: number): string {
+  return n.toLocaleString('pt-BR', { maximumFractionDigits: 1 })
+}
+
 export function hours(n: number): string {
-  return `${n.toLocaleString('pt-BR', { maximumFractionDigits: 1 })}h`
+  return `${decimal(n)}h`
 }
 
 export function signedHours(n: number): string {

@@ -33,6 +33,7 @@ export function toMonthlyProgressViewModel(r: R): MonthlyProgressViewModel {
     averageHoursPerTask: round1(r.averageHoursPerTask),
     targetByEndOfToday: round1(r.targetByEndOfToday),
     pacePerWorkday: r.pacePerWorkday === null ? null : round1(r.pacePerWorkday),
+    tasksPerWorkday: r.tasksPerWorkday === null ? null : round1(r.tasksPerWorkday),
     projectedHours: r.projectedHours === null ? null : round1(r.projectedHours),
     projectedPercent: r.projectedHours === null ? null : percent(r.projectedHours, r.goalHours),
     delivered: toOutlookScenario(r.delivered, r.goalHours),

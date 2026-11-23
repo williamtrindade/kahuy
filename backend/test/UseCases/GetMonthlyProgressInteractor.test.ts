@@ -63,6 +63,20 @@ describe('GetMonthlyProgressInteractor', () => {
     expect(beforeFirstWorkday.pacePerWorkday).toBeNull()
   })
 
+  it('averages the done tasks per workday up to today, today included', async () => {
+    const r = await run({}) // qui 05/11: A e B concluídas em 4 dias úteis
+    expect(r.elapsedWorkingDays).toBe(4)
+    expect(r.tasksPerWorkday).toBeCloseTo(2 / 4)
+    const withToday = await run({}, { tasks: [...novemberTasks(), makeTask({ title: 'hoje', hours: 1, endDate: new Date('2026-11-05T13:00:00Z') })] })
+    expect(withToday.tasksPerWorkday).toBeCloseTo(3 / 4)
+    const past = await run({ month: '2026-10' }) // outubro inteiro: só C em 22 dias úteis
+    expect([past.elapsedWorkingDays, past.tasksPerWorkday]).toEqual([22, 1 / 22])
+    const future = await run({ month: '2026-12' })
+    expect([future.elapsedWorkingDays, future.tasksPerWorkday]).toEqual([0, null])
+    const beforeFirstWorkday = await run({}, { now: '2026-11-01T15:00:00Z' })
+    expect(beforeFirstWorkday.tasksPerWorkday).toBeNull()
+  })
+
   it('counts the hours delivered today in the pace, the projection and the expected hours', async () => {
     const tasks = [...novemberTasks(), makeTask({ title: 'hoje', hours: 3, endDate: new Date('2026-11-05T13:00:00Z') })]
     const r = await run({}, { tasks })

@@ -8,7 +8,7 @@ goal**. It reads your database (read-only) and shows your progress against 100% 
 - **Today**: hours vs. the daily goal
 - **Week** (Sun–Sat, any week): what's missing and hours/day needed
 - **Month**: done, forecast, your pace and projection, cumulative chart with goal lines, a calendar (workdays, vacation,
-  holidays), hours by type/dev/requester, and the task list (development and testing), by month or week
+  holidays), tasks per workday, hours by type/dev/requester, and the task list (development and testing), by month or week
 - **Quarter**: the three months combined, any quarter of any year
 
 Today, week, month, and quarter switch between **Delivered** (done tasks only) and **Forecast** (+ open tasks).

@@ -71,6 +71,8 @@ export class GetMonthlyProgressInteractor implements GetMonthlyProgressInputBoun
       targetByEndOfToday: expected,
       dailyGoalHours: workMonth.hoursPerDay,
       pacePerWorkday: pace,
+      elapsedWorkingDays: elapsedWorkdays,
+      tasksPerWorkday: elapsedWorkdays > 0 ? done.length / elapsedWorkdays : null,
       projectedHours: pace === null ? null : doneHours + pace * daysAfterToday,
       delivered: scenario(doneHours),
       forecast: scenario(doneHours + openHours),

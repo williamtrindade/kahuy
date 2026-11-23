@@ -17,6 +17,10 @@ export type GetMonthlyProgressResponseModel = {
   dailyGoalHours: number
   /** ritmo: entregue no mês antes de hoje ÷ dias úteis do mês já encerrados; null se nenhum encerrou */
   pacePerWorkday: number | null
+  /** dias úteis do mês até hoje (inclusive); o mês inteiro se passado, 0 se futuro */
+  elapsedWorkingDays: number
+  /** tasks concluídas no mês ÷ elapsedWorkingDays; null se ainda não houve dia útil */
+  tasksPerWorkday: number | null
   /** projeção do mês: entregue até ontem + ritmo × dias úteis restantes (mínimo = entregue) */
   projectedHours: number | null
   /** Dois cenários para o front alternar: delivered (só concluídas) e forecast (+ tasks em aberto). */
